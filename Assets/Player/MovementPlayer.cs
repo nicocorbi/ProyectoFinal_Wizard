@@ -1,0 +1,148 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class PlayerMovement : MonoBehaviour
+{
+    [Header("Movimiento")]
+    public float walkSpeed = 5f;
+    public float runSpeed = 7f;
+    public float jumpForce = 16f;         
+    public float lowJumpGravity = 30f;    
+    public float fallGravity = 50f;       
+    private Rigidbody rb;
+    private Vector3 movement;
+
+    [Header("Sprites")]
+    public SpriteRenderer spriteRenderer;
+
+    public Sprite[] upSprites;   
+    public Sprite[] downSprites;
+    public Sprite[] rightSprites;
+
+    private float animationTimer = 0f;
+    public float walkAnimationInterval = 0.2f;
+    public float runAnimationInterval = 0.1f;
+    private int animationFrame = 0;
+    private int lastDirection = 0; 
+
+    
+    private bool isGrounded = false;
+    private int jumpCount = 0;
+    public int maxJumps = 2; 
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
+
+    void Update()
+    {
+        float x = 0f;
+        float z = 0f;
+
+        if (Keyboard.current.wKey.isPressed) z += 1;
+        if (Keyboard.current.sKey.isPressed) z -= 1;
+        if (Keyboard.current.aKey.isPressed) x -= 1;
+        if (Keyboard.current.dKey.isPressed) x += 1;
+
+        bool isRunning = Keyboard.current.leftShiftKey.isPressed || Keyboard.current.rightShiftKey.isPressed;
+        float speed = isRunning ? runSpeed : walkSpeed;
+        float animationInterval = isRunning ? runAnimationInterval : walkAnimationInterval;
+
+        movement = new Vector3(x, 0f, z).normalized * speed;
+
+        // Salto y doble salto
+        if (Keyboard.current.spaceKey.wasPressedThisFrame && jumpCount < maxJumps)
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); 
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            jumpCount++;
+        }
+
+        // Animación
+        if (movement.magnitude > 0.01f)
+        {
+            if (Mathf.Abs(x) > Mathf.Abs(z))
+            {
+                lastDirection = x > 0 ? 2 : 3;
+            }
+            else if (Mathf.Abs(z) > 0)
+            {
+                lastDirection = z > 0 ? 1 : 0;
+            }
+
+            animationTimer += Time.deltaTime;
+            if (animationTimer >= animationInterval)
+            {
+                animationFrame = (animationFrame + 1) % 4;
+                animationTimer = 0f;
+            }
+        }
+        else
+        {
+            animationFrame = 0;
+            animationTimer = 0f;
+        }
+
+        switch (lastDirection)
+        {
+            case 0:
+                spriteRenderer.sprite = downSprites[animationFrame];
+                spriteRenderer.flipX = false;
+                break;
+            case 1:
+                spriteRenderer.sprite = upSprites[animationFrame];
+                spriteRenderer.flipX = false;
+                break;
+            case 2:
+                spriteRenderer.sprite = rightSprites[animationFrame];
+                spriteRenderer.flipX = false;
+                break;
+            case 3:
+                spriteRenderer.sprite = rightSprites[animationFrame];
+                spriteRenderer.flipX = true;
+                break;
+        }
+    }
+
+    void FixedUpdate()
+    {
+        // Movimiento horizontal siempre disponible, incluso en el aire
+        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+
+        
+        if (rb.linearVelocity.y > 0.1f)
+        {
+            // Subiendo: gravedad extra moderada
+            rb.AddForce(Vector3.down * lowJumpGravity, ForceMode.Acceleration);
+        }
+        else if (rb.linearVelocity.y < -0.1f)
+        {
+            // Bajando: gravedad extra fuerte
+            rb.AddForce(Vector3.down * fallGravity, ForceMode.Acceleration);
+        }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = true;
+            jumpCount = 0;
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
+    }
+}
+
+
+
+
+
