@@ -679,8 +679,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c1cff7a6adfe7d48bb7c7135925b531, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatController
-  JugadorMana: 5
-  EnemigoHP: 200
+  jugadorHealth: {fileID: 1859309071}
+  enemigoHealth: {fileID: 1794844082}
+  JugadorMana: 20
   deck: {fileID: 835762198}
   cartasSpawnPoint: {fileID: 1139637613}
   escalaBaseCarta: 0.1
@@ -1022,6 +1023,7 @@ GameObject:
   - component: {fileID: 1794844076}
   - component: {fileID: 1794844075}
   - component: {fileID: 1794844081}
+  - component: {fileID: 1794844082}
   m_Layer: 0
   m_Name: Enemigo
   m_TagString: Untagged
@@ -1043,6 +1045,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   wanderRadius: 8
   wanderInterval: 3
+  spriteRenderer: {fileID: 1636048938}
+  upSprites:
+  - {fileID: 7043811978007918041, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: -7723253972256136601, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: -1137364592071911362, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: -3549988229105279555, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  downSprites:
+  - {fileID: -6598946016331564889, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: -7675304248189546062, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: -6388338761078672736, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: -303320121775701381, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  rightSprites:
+  - {fileID: 2249745419088220813, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: 5333771517180107481, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: -646623592477257922, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  - {fileID: 5856893256139009897, guid: 23748c298f885bf4c89671f6d30f562b, type: 3}
+  animationInterval: 0.2
 --- !u!54 &1794844076
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1188,6 +1207,20 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &1794844082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794844074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e15ed24638abad54fac89b0c62d13979, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  maxHealth: 100
+  currentHealth: 0
 --- !u!1 &1859309064
 GameObject:
   m_ObjectHideFlags: 0
@@ -1202,6 +1235,7 @@ GameObject:
   - component: {fileID: 1859309067}
   - component: {fileID: 1859309066}
   - component: {fileID: 1859309065}
+  - component: {fileID: 1859309071}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1369,6 +1403,20 @@ Transform:
   - {fileID: 150050821}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1859309071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1859309064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e15ed24638abad54fac89b0c62d13979, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  maxHealth: 200
+  currentHealth: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -102,6 +102,53 @@ public class Enemy : MonoBehaviour
                 break;
         }
     }
+    public void LookAtPlayer(Transform player)
+    {
+        Vector3 dir = player.position - transform.position;
+
+        float x = dir.x;
+        float z = dir.z;
+
+        // Determinar dirección dominante
+        if (Mathf.Abs(x) > Mathf.Abs(z))
+        {
+            // Derecha o izquierda
+            lastDirection = x > 0 ? 2 : 3;
+        }
+        else
+        {
+            // Arriba o abajo
+            lastDirection = z > 0 ? 1 : 0;
+        }
+
+        // Forzar frame 0 (idle mirando al jugador)
+        animationFrame = 0;
+
+        // Aplicar sprite
+        switch (lastDirection)
+        {
+            case 0: // abajo
+                spriteRenderer.sprite = downSprites[0];
+                spriteRenderer.flipX = false;
+                break;
+
+            case 1: // arriba
+                spriteRenderer.sprite = upSprites[0];
+                spriteRenderer.flipX = false;
+                break;
+
+            case 2: // derecha
+                spriteRenderer.sprite = rightSprites[0];
+                spriteRenderer.flipX = false;
+                break;
+
+            case 3: // izquierda
+                spriteRenderer.sprite = rightSprites[0];
+                spriteRenderer.flipX = true;
+                break;
+        }
+    }
+
 
     // Genera una posición aleatoria válida en el NavMesh
     public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)

@@ -4,8 +4,9 @@ using System.Collections.Generic;
 public class CombatController : MonoBehaviour
 {
     [Header("Stats")]
+    public HealthComponent jugadorHealth;
+    public HealthComponent enemigoHealth;
     public int JugadorMana = 5;
-    public int EnemigoHP = 200;
 
     [Header("Sistema de mazo")]
     public DeckManager deck;
@@ -13,7 +14,7 @@ public class CombatController : MonoBehaviour
     [Header("Visual")]
     public Transform cartasSpawnPoint;
     public float escalaBaseCarta = 0.1f;
-    public float separacion = 2f;   // 🔥 distancia entre cartas en fila
+    public float separacion = 2f;
     public float levantamientoY = 0.5f;
 
     private List<GameObject> cartasInstanciadas = new List<GameObject>();
@@ -24,6 +25,10 @@ public class CombatController : MonoBehaviour
     {
         MostrarMano();
         esperandoSeleccion = true;
+
+        // Eventos de muerte
+        enemigoHealth.OnDeath += EnemigoMuerto;
+        jugadorHealth.OnDeath += JugadorMuerto;
     }
 
     private void Update()
@@ -47,8 +52,20 @@ public class CombatController : MonoBehaviour
         {
             SeleccionarCarta(currentIndex);
         }
-
     }
+    public void IniciarCombate(GameObject enemigo)
+    {
+        enemigoHealth = enemigo.GetComponent<HealthComponent>();
+
+        // Aquí puedes desactivar movimiento del jugador si quieres
+        // playerMovement.enabled = false;
+
+        Debug.Log("Combate iniciado contra " + enemigo.name);
+
+        MostrarMano();
+        esperandoSeleccion = true;
+    }
+
 
     private void MostrarMano()
     {
@@ -64,13 +81,8 @@ public class CombatController : MonoBehaviour
             var carta = mano[i];
             GameObject cartaGO = Instantiate(carta.gameObject, cartasSpawnPoint);
 
-            // 🔥 POSICIÓN EN FILA (sin abanico)
             cartaGO.transform.localPosition = new Vector3(i * separacion, 0, 0);
-
-            // 🔥 SIN ROTACIÓN
             cartaGO.transform.localRotation = Quaternion.identity;
-
-            // 🔥 ESCALA BASE
             cartaGO.transform.localScale = Vector3.one * escalaBaseCarta;
 
             cartasInstanciadas.Add(cartaGO);
@@ -87,7 +99,6 @@ public class CombatController : MonoBehaviour
 
             if (i == currentIndex)
             {
-                // 🔥 Levantar ligeramente la carta seleccionada
                 cartaGO.transform.localPosition =
                     new Vector3(i * separacion, levantamientoY, 0);
 
@@ -118,11 +129,15 @@ public class CombatController : MonoBehaviour
         }
 
         JugadorMana -= carta.Cost;
+
+        // Ejecuta la carta (daño, curación, etc.)
         carta.EjecutarCarta(this);
 
-        deck.UsarCarta(index); // 🔥 descarta y roba una nueva
+        // Descarta y roba una nueva
+        deck.UsarCarta(index);
 
-        MostrarMano(); // 🔥 actualiza la fila
+        // Actualiza la mano visual
+        MostrarMano();
 
         esperandoSeleccion = false;
         ComprobarEstado();
@@ -130,7 +145,7 @@ public class CombatController : MonoBehaviour
 
     private void ComprobarEstado()
     {
-        if (EnemigoHP <= 0)
+        if (enemigoHealth.currentHealth <= 0)
         {
             Debug.Log("¡Has ganado!");
             return;
@@ -141,7 +156,11 @@ public class CombatController : MonoBehaviour
 
     private void TurnoEnemigo()
     {
-        EnemigoHP -= 10;
+        //enemigoHealth.TakeDamage(0); // por si quieres activar eventos
+
+        // Daño al jugador
+        //jugadorHealth.TakeDamage(10);
+
         TurnoJugador();
     }
 
@@ -150,4 +169,17 @@ public class CombatController : MonoBehaviour
         esperandoSeleccion = true;
         MostrarCartaActual();
     }
+
+    private void EnemigoMuerto()
+    {
+        jugadorHealth.GetComponent<PlayerMovement>().enabled = true;
+        Debug.Log("El enemigo ha muerto");
+    }
+
+    private void JugadorMuerto()
+    {
+        jugadorHealth.GetComponent<PlayerMovement>().enabled = true;
+        Debug.Log("Has muerto");
+    }
 }
+

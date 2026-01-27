@@ -6,7 +6,7 @@ public class CartaAtaque : CartasAbstractClass
 
     public override void EjecutarCarta(CombatController combate)
     {
-        
+        combate.enemigoHealth.TakeDamage(damage);
         Debug.Log($"{Name} hizo {damage} de daño");
     }
 }
