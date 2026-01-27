@@ -7,15 +7,14 @@ public class CombatController : MonoBehaviour
     public int JugadorMana = 5;
     public int EnemigoHP = 200;
 
-    [Header("Cartas")]
-    [SerializeField] private List<CartasAbstractClass> cartasDisponibles;
+    [Header("Sistema de mazo")]
+    public DeckManager deck;
 
     [Header("Visual")]
-    [SerializeField] private Transform cartasSpawnPoint;
-    [SerializeField] private float separacion = 2f;
-
-    // 🔥 Escala base de las cartas (AJUSTADA A 0.1)
-    [SerializeField] private float escalaBaseCarta = 0.1f;
+    public Transform cartasSpawnPoint;
+    public float escalaBaseCarta = 0.1f;
+    public float separacion = 2f;   // 🔥 distancia entre cartas en fila
+    public float levantamientoY = 0.5f;
 
     private List<GameObject> cartasInstanciadas = new List<GameObject>();
     private int currentIndex = 0;
@@ -23,16 +22,8 @@ public class CombatController : MonoBehaviour
 
     private void Start()
     {
-        IniciarCombate();
-    }
-
-    public void IniciarCombate()
-    {
-        Debug.Log("Combate iniciado");
-
-        InstanciarCartasVisuales();
+        MostrarMano();
         esperandoSeleccion = true;
-        MostrarCartaActual();
     }
 
     private void Update()
@@ -52,61 +43,73 @@ public class CombatController : MonoBehaviour
             MostrarCartaActual();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
             SeleccionarCarta(currentIndex);
         }
+
     }
 
-
-    private void InstanciarCartasVisuales()
+    private void MostrarMano()
     {
         foreach (var c in cartasInstanciadas)
             Destroy(c);
 
         cartasInstanciadas.Clear();
 
-        for (int i = 0; i < cartasDisponibles.Count; i++)
-        {
-            var carta = cartasDisponibles[i];
+        var mano = deck.ObtenerMano();
 
-            // 🔥 Instanciar como HIJO del spawn point
+        for (int i = 0; i < mano.Count; i++)
+        {
+            var carta = mano[i];
             GameObject cartaGO = Instantiate(carta.gameObject, cartasSpawnPoint);
 
-            // 🔥 Posición relativa al spawn point
+            // 🔥 POSICIÓN EN FILA (sin abanico)
             cartaGO.transform.localPosition = new Vector3(i * separacion, 0, 0);
 
-            // 🔥 Escala base
-            cartaGO.transform.localScale = Vector3.one * escalaBaseCarta;
+            // 🔥 SIN ROTACIÓN
+            cartaGO.transform.localRotation = Quaternion.identity;
 
-            // 🔥 Mirar hacia la cámara
-            cartaGO.transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward);
+            // 🔥 ESCALA BASE
+            cartaGO.transform.localScale = Vector3.one * escalaBaseCarta;
 
             cartasInstanciadas.Add(cartaGO);
         }
-    }
 
+        MostrarCartaActual();
+    }
 
     private void MostrarCartaActual()
     {
         for (int i = 0; i < cartasInstanciadas.Count; i++)
         {
-            float escala = (i == currentIndex)
-                ? escalaBaseCarta * 1.2f   // seleccionada
-                : escalaBaseCarta;         // normal
+            var cartaGO = cartasInstanciadas[i];
 
-            cartasInstanciadas[i].transform.localScale = Vector3.one * escala;
+            if (i == currentIndex)
+            {
+                // 🔥 Levantar ligeramente la carta seleccionada
+                cartaGO.transform.localPosition =
+                    new Vector3(i * separacion, levantamientoY, 0);
+
+                cartaGO.transform.localScale =
+                    Vector3.one * escalaBaseCarta * 1.2f;
+            }
+            else
+            {
+                cartaGO.transform.localPosition =
+                    new Vector3(i * separacion, 0, 0);
+
+                cartaGO.transform.localScale =
+                    Vector3.one * escalaBaseCarta;
+            }
         }
-
-        var carta = cartasDisponibles[currentIndex];
-        Debug.Log($"Seleccionada: {carta.Name} | Coste: {carta.Cost}");
     }
 
-    public void SeleccionarCarta(int index)
+    private void SeleccionarCarta(int index)
     {
         if (!esperandoSeleccion) return;
 
-        var carta = cartasDisponibles[index];
+        var carta = deck.ObtenerMano()[index];
 
         if (JugadorMana < carta.Cost)
         {
@@ -117,8 +120,11 @@ public class CombatController : MonoBehaviour
         JugadorMana -= carta.Cost;
         carta.EjecutarCarta(this);
 
-        esperandoSeleccion = false;
+        deck.UsarCarta(index); // 🔥 descarta y roba una nueva
 
+        MostrarMano(); // 🔥 actualiza la fila
+
+        esperandoSeleccion = false;
         ComprobarEstado();
     }
 
@@ -135,16 +141,12 @@ public class CombatController : MonoBehaviour
 
     private void TurnoEnemigo()
     {
-        Debug.Log("Turno del enemigo...");
         EnemigoHP -= 10;
-        Debug.Log("El enemigo te ataca");
-
         TurnoJugador();
     }
 
     private void TurnoJugador()
     {
-        Debug.Log("Tu turno");
         esperandoSeleccion = true;
         MostrarCartaActual();
     }
