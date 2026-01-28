@@ -1,0 +1,80 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4058457241031881833
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9045443966755184964}
+  - component: {fileID: 5048804609410261981}
+  - component: {fileID: 2845920055925868060}
+  m_Layer: 0
+  m_Name: CombatController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9045443966755184964
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4058457241031881833}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.65, y: 4.10787, z: -18.10172}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5048804609410261981
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4058457241031881833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c1cff7a6adfe7d48bb7c7135925b531, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatController
+  jugadorHealth: {fileID: 0}
+  enemigoHealth: {fileID: 0}
+  JugadorMana: 20
+  deck: {fileID: 2845920055925868060}
+  cartasSpawnPoint: {fileID: 0}
+  escalaBaseCarta: 0.1
+  separacion: 1
+  levantamientoY: 0.8
+--- !u!114 &2845920055925868060
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4058457241031881833}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60302b25748042c42aef9390a5aed8bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeckManager
+  mazoInicial:
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  - {fileID: 6648187090123562613, guid: 04c9973b49f970e43827a4d5c5fc171f, type: 3}
+  - {fileID: 6648187090123562613, guid: 04c9973b49f970e43827a4d5c5fc171f, type: 3}
+  - {fileID: 6648187090123562613, guid: 04c9973b49f970e43827a4d5c5fc171f, type: 3}
+  - {fileID: 6648187090123562613, guid: 04c9973b49f970e43827a4d5c5fc171f, type: 3}
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  "tama\xF1oMano": 5

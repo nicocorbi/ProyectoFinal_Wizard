@@ -14,26 +14,29 @@ public class Enemy : MonoBehaviour
     [Header("Sprites")]
     public SpriteRenderer spriteRenderer;
 
-    public Sprite[] upSprites;     // 4 sprites
-    public Sprite[] downSprites;   // 4 sprites
-    public Sprite[] rightSprites;  // 4 sprites (se usa flipX para izquierda)
+    public Sprite[] upSprites;
+    public Sprite[] downSprites;
+    public Sprite[] rightSprites;
+
+    public int lastDirection = 0;
 
     private float animationTimer = 0f;
     public float animationInterval = 0.2f;
     private int animationFrame = 0;
-    private int lastDirection = 0; // 0=down, 1=up, 2=right, 3=left
+
+    private bool inBattle = false; // 🔥 IMPORTANTE
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         originPos = transform.position;
         wanderTimer = wanderInterval;
-
     }
 
     void Update()
     {
-        
+        if (inBattle)
+            return; // 🔥 NO IA NI ANIMACIÓN DURANTE COMBATE
 
         // --- IA DE MOVIMIENTO ---
         wanderTimer += Time.deltaTime;
@@ -48,7 +51,6 @@ public class Enemy : MonoBehaviour
         // --- ANIMACIÓN ---
         Vector3 vel = agent.velocity;
 
-        // Si no se mueve → idle
         if (vel.magnitude < 0.1f)
         {
             animationFrame = 0;
@@ -59,17 +61,11 @@ public class Enemy : MonoBehaviour
             float x = vel.x;
             float z = vel.z;
 
-            // Determinar dirección dominante
             if (Mathf.Abs(x) > Mathf.Abs(z))
-            {
-                lastDirection = x > 0 ? 2 : 3; // derecha o izquierda
-            }
+                lastDirection = x > 0 ? 2 : 3;
             else
-            {
-                lastDirection = z > 0 ? 1 : 0; // arriba o abajo
-            }
+                lastDirection = z > 0 ? 1 : 0;
 
-            // Avanzar animación
             animationTimer += Time.deltaTime;
             if (animationTimer >= animationInterval)
             {
@@ -78,30 +74,27 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // Aplicar sprite según dirección
         switch (lastDirection)
         {
-            case 0: // abajo
+            case 0:
                 spriteRenderer.sprite = downSprites[animationFrame];
                 spriteRenderer.flipX = false;
                 break;
-
-            case 1: // arriba
+            case 1:
                 spriteRenderer.sprite = upSprites[animationFrame];
                 spriteRenderer.flipX = false;
                 break;
-
-            case 2: // derecha
+            case 2:
                 spriteRenderer.sprite = rightSprites[animationFrame];
                 spriteRenderer.flipX = false;
                 break;
-
-            case 3: // izquierda
+            case 3:
                 spriteRenderer.sprite = rightSprites[animationFrame];
                 spriteRenderer.flipX = true;
                 break;
         }
     }
+
     public void LookAtPlayer(Transform player)
     {
         Vector3 dir = player.position - transform.position;
@@ -109,48 +102,44 @@ public class Enemy : MonoBehaviour
         float x = dir.x;
         float z = dir.z;
 
-        // Determinar dirección dominante
         if (Mathf.Abs(x) > Mathf.Abs(z))
-        {
-            // Derecha o izquierda
             lastDirection = x > 0 ? 2 : 3;
-        }
         else
-        {
-            // Arriba o abajo
             lastDirection = z > 0 ? 1 : 0;
-        }
 
-        // Forzar frame 0 (idle mirando al jugador)
         animationFrame = 0;
 
-        // Aplicar sprite
         switch (lastDirection)
         {
-            case 0: // abajo
+            case 0:
                 spriteRenderer.sprite = downSprites[0];
                 spriteRenderer.flipX = false;
                 break;
-
-            case 1: // arriba
+            case 1:
                 spriteRenderer.sprite = upSprites[0];
                 spriteRenderer.flipX = false;
                 break;
-
-            case 2: // derecha
+            case 2:
                 spriteRenderer.sprite = rightSprites[0];
                 spriteRenderer.flipX = false;
                 break;
-
-            case 3: // izquierda
+            case 3:
                 spriteRenderer.sprite = rightSprites[0];
                 spriteRenderer.flipX = true;
                 break;
         }
     }
 
+    public void EnterBattle(Transform player)
+    {
+        inBattle = true;
 
-    // Genera una posición aleatoria válida en el NavMesh
+        if (agent != null)
+            agent.enabled = false;
+
+        LookAtPlayer(player);
+    }
+
     public static Vector3 RandomNavSphere(Vector3 origin, float dist, int layermask)
     {
         Vector3 randDirection = Random.insideUnitSphere * dist;
@@ -160,3 +149,5 @@ public class Enemy : MonoBehaviour
         return navHit.position;
     }
 }
+
+
