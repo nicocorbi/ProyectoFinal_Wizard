@@ -3,13 +3,10 @@ using System.Collections.Generic;
 
 public class EnemyDeckManager : MonoBehaviour
 {
-    [Header("Cartas disponibles en el mazo del enemigo")]
-    public List<CartasAbstractClass> cartasEnMazo = new List<CartasAbstractClass>();
-
-    [Header("Tamaño de la mano del enemigo")]
+    public List<CardData> cartasEnMazo;
     public int manoSize = 3;
 
-    private List<CartasAbstractClass> manoActual = new List<CartasAbstractClass>();
+    private List<CardData> manoActual = new List<CardData>();
 
     private void Start()
     {
@@ -21,9 +18,7 @@ public class EnemyDeckManager : MonoBehaviour
         manoActual.Clear();
 
         for (int i = 0; i < manoSize; i++)
-        {
             RobarCarta();
-        }
     }
 
     private void RobarCarta()
@@ -38,7 +33,7 @@ public class EnemyDeckManager : MonoBehaviour
         manoActual.Add(cartasEnMazo[index]);
     }
 
-    public List<CartasAbstractClass> ObtenerMano()
+    public List<CardData> ObtenerMano()
     {
         return manoActual;
     }
@@ -49,4 +44,5 @@ public class EnemyDeckManager : MonoBehaviour
         RobarCarta();
     }
 }
+
 

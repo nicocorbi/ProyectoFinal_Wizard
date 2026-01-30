@@ -4,7 +4,7 @@ public class HealthComponent : MonoBehaviour
 {
     [Header("Vida")]
     public int maxHealth = 100;
-    public int currentHealth;
+    public int currentHealth = 0;
 
     public System.Action OnDeath;
     public System.Action<int> OnDamage;

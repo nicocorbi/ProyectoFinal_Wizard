@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1665373447218754480}
   - component: {fileID: 6077269207329245767}
   - component: {fileID: 4641613062115750706}
+  - component: {fileID: 397636352955212815}
   m_Layer: 0
   m_Name: Card_shirt_01
   m_TagString: Untagged
@@ -104,7 +105,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0da56bb730cfed54a867b8da1fb1484c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CartaAtaque
-  CartaName: 1
-  ManaCost: 0
-  CartaImage: {fileID: 21300000, guid: c7bf45f0ef95bed4491c5809fc6bf484, type: 3}
-  damage: 50
+  data: {fileID: 11400000, guid: a243708891def484fbd053d66417039a, type: 2}
+--- !u!114 &397636352955212815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2998216144590256706}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5d45d0b3c5949d45b4f2f1a9d206bb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CartaVisual
+  cartaLogic: {fileID: 4641613062115750706}
+  artworkImage: {fileID: 0}

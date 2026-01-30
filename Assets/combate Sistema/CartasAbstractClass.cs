@@ -2,16 +2,15 @@ using UnityEngine;
 
 public abstract class CartasAbstractClass : MonoBehaviour
 {
-    [SerializeField] protected string CartaName;
-    [SerializeField] protected int ManaCost;
-    [SerializeField] protected Sprite CartaImage;
+    public CardData data;
 
-    public string Name => CartaName;
-    public int Cost => ManaCost;
-    public Sprite Image => CartaImage;
+    public string Name => data.cardName;
+    public int Cost => data.manaCost;
+    public int Damage => data.damage;
+    public Sprite Image => data.artwork;
 
-    // IMPORTANTE: ahora sabe si la usa el jugador o el enemigo
     public abstract void EjecutarCarta(CombatController combate, bool usadaPorJugador);
 }
+
 
 

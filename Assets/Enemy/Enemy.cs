@@ -3,6 +3,10 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour
 {
+    [Header("Datos del enemigo (ScriptableObject)")]
+    public EnemyStats stats;          // ← NUEVO
+    public HealthComponent health;    // ← NUEVO
+
     [Header("IA")]
     public float wanderRadius = 8f;
     public float wanderInterval = 3f;
@@ -24,7 +28,21 @@ public class Enemy : MonoBehaviour
     public float animationInterval = 0.2f;
     private int animationFrame = 0;
 
-    private bool inBattle = false; // 🔥 IMPORTANTE
+    private bool inBattle = false;
+
+    private void Awake()
+    {
+        // 🔥 Inicializar vida desde EnemyStats
+        if (stats != null && health != null)
+        {
+            health.maxHealth = (int)stats.maxHealth;
+            health.currentHealth = (int)stats.maxHealth;
+        }
+        else
+        {
+            Debug.LogError("EnemyStats o HealthComponent no asignados en " + name);
+        }
+    }
 
     void Start()
     {
@@ -36,7 +54,7 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         if (inBattle)
-            return; // 🔥 NO IA NI ANIMACIÓN DURANTE COMBATE
+            return;
 
         // --- IA DE MOVIMIENTO ---
         wanderTimer += Time.deltaTime;
@@ -44,12 +62,16 @@ public class Enemy : MonoBehaviour
         if (wanderTimer >= wanderInterval)
         {
             Vector3 newPos = RandomNavSphere(originPos, wanderRadius, NavMesh.AllAreas);
-            agent.SetDestination(newPos);
+
+            // ✔ Evita el error de SetDestination
+            if (agent != null && agent.enabled && agent.isOnNavMesh)
+                agent.SetDestination(newPos);
+
             wanderTimer = 0f;
         }
 
         // --- ANIMACIÓN ---
-        Vector3 vel = agent.velocity;
+        Vector3 vel = agent != null ? agent.velocity : Vector3.zero;
 
         if (vel.magnitude < 0.1f)
         {
@@ -94,6 +116,7 @@ public class Enemy : MonoBehaviour
                 break;
         }
     }
+
 
     public void LookAtPlayer(Transform player)
     {

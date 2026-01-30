@@ -3,12 +3,15 @@ using UnityEngine;
 
 public class DeckManager : MonoBehaviour
 {
-    [Header("Configuración del mazo")]
-    public List<CartasAbstractClass> mazoInicial; 
+    [Header("Datos del mazo")]
+    public List<CardData> mazoInicial;
 
-    private List<CartasAbstractClass> mazo = new List<CartasAbstractClass>();
-    private List<CartasAbstractClass> descarte = new List<CartasAbstractClass>();
-    private List<CartasAbstractClass> mano = new List<CartasAbstractClass>();
+    [Header("Prefab de carta")]
+    public GameObject cartaPrefab;
+
+    private List<CardData> mazo = new List<CardData>();
+    private List<CardData> descarte = new List<CardData>();
+    private List<CardData> mano = new List<CardData>();
 
     public int tamañoMano = 5;
 
@@ -30,7 +33,7 @@ public class DeckManager : MonoBehaviour
         RobarManoInicial();
     }
 
-    private void Barajar(List<CartasAbstractClass> lista)
+    private void Barajar(List<CardData> lista)
     {
         for (int i = 0; i < lista.Count; i++)
         {
@@ -51,7 +54,6 @@ public class DeckManager : MonoBehaviour
     {
         if (mazo.Count == 0)
         {
-            // Si el mazo está vacío, barajamos el descarte
             foreach (var c in descarte)
                 mazo.Add(c);
 
@@ -67,7 +69,7 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    public List<CartasAbstractClass> ObtenerMano()
+    public List<CardData> ObtenerMano()
     {
         return mano;
     }
@@ -78,6 +80,7 @@ public class DeckManager : MonoBehaviour
         mano.RemoveAt(index);
         descarte.Add(carta);
 
-        RobarCarta(); // repone la mano
+        RobarCarta();
     }
 }
+

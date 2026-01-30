@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class CombatController : MonoBehaviour
@@ -7,16 +8,17 @@ public class CombatController : MonoBehaviour
     public HealthComponent jugadorHealth;
     public HealthComponent enemigoHealth;
     public int JugadorMana = 5;
+    public int EnemyMana = 5;
 
     [Header("Mazo del jugador")]
     public DeckManager deck;
 
     [Header("Mazo del enemigo")]
     public EnemyDeckManager enemyDeck;
-    public int EnemyMana = 5;
 
     [Header("Visual jugador")]
     public Transform cartasSpawnPoint;
+    public GameObject cartaVisualPrefab;
     public float escalaBaseCarta = 0.1f;
     public float separacion = 2f;
     public float levantamientoY = 0.5f;
@@ -25,33 +27,29 @@ public class CombatController : MonoBehaviour
     private int currentIndex = 0;
     private bool esperandoSeleccion = false;
 
-    // ---------------------------------------------------------
-    // AWAKE: asegura que siempre usamos el jugador correcto
-    // ---------------------------------------------------------
-    private void Awake()
-    {
-
-        var playerObj = GameObject.FindGameObjectWithTag("Player");
-        if (playerObj != null)
-        {
-            jugadorHealth = playerObj.GetComponent<HealthComponent>();
-        }
-        else
-        {
-            Debug.LogError("No se encontró un objeto con tag Player en la escena de combate.");
-        }
-    }
-
     private void Start()
     {
-        Debug.Log("JugadorHealth encontrado: " + jugadorHealth.name);
-        Debug.Log("Vida inicial del jugador: " + jugadorHealth.currentHealth);
+        StartCoroutine(EsperarPlayer());
+    }
+
+    private IEnumerator EsperarPlayer()
+    {
+        GameObject playerObj = null;
+
+        // Espera hasta que el CLON del Player exista en la escena
+        while (playerObj == null)
+        {
+            playerObj = GameObject.FindGameObjectWithTag("Player");
+            yield return null;
+        }
+
+        jugadorHealth = playerObj.GetComponent<HealthComponent>();
+
+        // Ahora sí podemos conectar eventos
+        jugadorHealth.OnDeath += JugadorMuerto;
 
         MostrarMano();
         esperandoSeleccion = true;
-
-        enemigoHealth.OnDeath += EnemigoMuerto;
-        jugadorHealth.OnDeath += JugadorMuerto;
     }
 
     private void Update()
@@ -80,8 +78,7 @@ public class CombatController : MonoBehaviour
     public void IniciarCombate(GameObject enemigo)
     {
         enemigoHealth = enemigo.GetComponent<HealthComponent>();
-
-        Debug.Log("Combate iniciado contra " + enemigo.name);
+        enemigoHealth.OnDeath += EnemigoMuerto;
 
         MostrarMano();
         esperandoSeleccion = true;
@@ -101,12 +98,14 @@ public class CombatController : MonoBehaviour
 
         for (int i = 0; i < mano.Count; i++)
         {
-            var carta = mano[i];
-            GameObject cartaGO = Instantiate(carta.gameObject, cartasSpawnPoint);
+            CardData data = mano[i];
 
+            GameObject cartaGO = Instantiate(cartaVisualPrefab, cartasSpawnPoint);
             cartaGO.transform.localPosition = new Vector3(i * separacion, 0, 0);
-            cartaGO.transform.localRotation = Quaternion.identity;
             cartaGO.transform.localScale = Vector3.one * escalaBaseCarta;
+
+            CartaVisual visual = cartaGO.GetComponent<CartaVisual>();
+            visual.Configurar(data);
 
             cartasInstanciadas.Add(cartaGO);
         }
@@ -145,22 +144,20 @@ public class CombatController : MonoBehaviour
 
         var manoJugador = deck.ObtenerMano();
         if (manoJugador.Count == 0 || index < 0 || index >= manoJugador.Count)
-        {
-            Debug.LogWarning("No hay carta válida seleccionada");
             return;
-        }
 
-        var carta = manoJugador[index];
+        CardData carta = manoJugador[index];
 
-        if (JugadorMana < carta.Cost)
+        if (JugadorMana < carta.manaCost)
         {
             Debug.Log("No tienes suficiente mana");
             return;
         }
 
-        JugadorMana -= carta.Cost;
+        JugadorMana -= carta.manaCost;
 
-        carta.EjecutarCarta(this, true); // jugador usa carta
+        CartaVisual visual = cartasInstanciadas[index].GetComponent<CartaVisual>();
+        visual.cartaLogic.EjecutarCarta(this, true);
 
         deck.UsarCarta(index);
 
@@ -170,18 +167,15 @@ public class CombatController : MonoBehaviour
         ComprobarEstado();
     }
 
-    // ---------------------------------------------------------
-    // CAMBIO DE TURNOS
-    // ---------------------------------------------------------
     private void ComprobarEstado()
     {
-        if (enemigoHealth.currentHealth <= 0)
+        if (enemigoHealth != null && enemigoHealth.currentHealth <= 0)
         {
             Debug.Log("¡Has ganado!");
             return;
         }
 
-        if (jugadorHealth.currentHealth <= 0)
+        if (jugadorHealth != null && jugadorHealth.currentHealth <= 0)
         {
             Debug.Log("Has muerto");
             return;
@@ -190,76 +184,56 @@ public class CombatController : MonoBehaviour
         TurnoEnemigo();
     }
 
-    // ---------------------------------------------------------
-    // TURNO DEL ENEMIGO (IA)
-    // ---------------------------------------------------------
     private void TurnoEnemigo()
     {
-        Debug.Log("Turno del enemigo");
-
         var manoEnemigo = enemyDeck.ObtenerMano();
 
         if (manoEnemigo == null || manoEnemigo.Count == 0)
         {
-            Debug.Log("El enemigo no tiene cartas");
             TurnoJugador();
             return;
         }
 
         int index = Random.Range(0, manoEnemigo.Count);
-        var carta = manoEnemigo[index];
+        CardData carta = manoEnemigo[index];
 
-        if (EnemyMana < carta.Cost)
+        if (EnemyMana < carta.manaCost)
         {
-            Debug.Log("El enemigo no tiene mana suficiente, pasa turno");
             TurnoJugador();
             return;
         }
 
-        EnemyMana -= carta.Cost;
+        EnemyMana -= carta.manaCost;
 
-        carta.EjecutarCarta(this, false); // enemigo usa carta
+        CartaAtaque temp = new GameObject("TempCard").AddComponent<CartaAtaque>();
+        temp.data = carta;
+        temp.EjecutarCarta(this, false);
+        Destroy(temp.gameObject);
 
         enemyDeck.UsarCarta(index);
 
-        Debug.Log("El enemigo usó la carta: " + carta.name);
-
         if (jugadorHealth.currentHealth <= 0)
-        {
-            Debug.Log("Has muerto");
             return;
-        }
 
         TurnoJugador();
     }
 
-    // ---------------------------------------------------------
-    // TURNO DEL JUGADOR
-    // ---------------------------------------------------------
     private void TurnoJugador()
     {
         esperandoSeleccion = true;
         MostrarCartaActual();
     }
 
-    // ---------------------------------------------------------
-    // EVENTOS DE MUERTE
-    // ---------------------------------------------------------
     private void EnemigoMuerto()
     {
-        var pm = jugadorHealth.GetComponent<PlayerMovement>();
-        if (pm != null) pm.enabled = true;
-
         Debug.Log("El enemigo ha muerto");
     }
 
     private void JugadorMuerto()
     {
-        var pm = jugadorHealth.GetComponent<PlayerMovement>();
-        if (pm != null) pm.enabled = true;
-
         Debug.Log("Has muerto");
     }
 }
+
 
 

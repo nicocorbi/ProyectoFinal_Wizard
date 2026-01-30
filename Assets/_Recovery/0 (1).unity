@@ -637,17 +637,6 @@ CanvasGroup:
   m_CorrespondingSourceObject: {fileID: 1413233224553248506, guid: 9769fec55a8773a4d911293e751349ac, type: 3}
   m_PrefabInstance: {fileID: 2983096683033478746}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1619829491 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1388119688620549908, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
-  m_PrefabInstance: {fileID: 2616244141236681812}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e15ed24638abad54fac89b0c62d13979, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
 --- !u!1001 &1760696656
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -822,14 +811,6 @@ PrefabInstance:
       propertyPath: m_Speed
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 8024572400006750075, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
-      propertyPath: stats
-      value: 
-      objectReference: {fileID: 11400000, guid: 1f418b5c7c0d5f143b469f8368d400e2, type: 2}
-    - target: {fileID: 8024572400006750075, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
-      propertyPath: health
-      value: 
-      objectReference: {fileID: 1619829491}
     - target: {fileID: 8583180682718035633, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

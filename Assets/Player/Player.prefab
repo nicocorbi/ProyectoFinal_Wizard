@@ -298,4 +298,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   maxHealth: 200
-  currentHealth: 0
+  currentHealth: 200
