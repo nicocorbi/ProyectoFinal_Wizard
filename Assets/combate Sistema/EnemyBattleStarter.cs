@@ -22,6 +22,7 @@ public class EnemyBattleStarter : MonoBehaviour
     private EnemyVision vision;
     private NavMeshAgent agent;
     private Transform player;
+    private PlayerMovement playerMovement;
 
     private bool chasing = false;
     private bool alertShown = false;
@@ -33,6 +34,7 @@ public class EnemyBattleStarter : MonoBehaviour
         vision = GetComponent<EnemyVision>();
         agent = GetComponent<NavMeshAgent>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        playerMovement = player.GetComponent<PlayerMovement>();
 
         agent.speed = patrolSpeed;
         originalPosition = transform.position;
@@ -91,13 +93,19 @@ public class EnemyBattleStarter : MonoBehaviour
     {
         agent.isStopped = true;
 
+        // Guardar enemigo
         PlayerPrefs.SetString("LastEnemy", gameObject.name);
 
-        FindObjectOfType<SceneFader>().FadeToScene(battleSceneName);
+        // Bloquear movimiento del jugador
+        playerMovement.enabled = false;
 
+        // Iniciar transición
+        FindObjectOfType<SceneFader>().FadeToScene(battleSceneName);
     }
 
-    private IEnumerator ShowAlertIcon()
+
+
+private IEnumerator ShowAlertIcon()
     {
         // Instanciar el icono encima del enemigo
         GameObject icon = Instantiate(alertIconPrefab, transform);

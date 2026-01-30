@@ -150,6 +150,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &50866596
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 50866598}
+  - component: {fileID: 50866597}
+  m_Layer: 0
+  m_Name: enemyDeck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &50866597
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50866596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5588c109396b4394a98d5652df9ea348, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyDeckManager
+  cartasEnMazo:
+  - {fileID: 4641613062115750706, guid: 869bd9554580d6e4bbed9e3fdbaa8531, type: 3}
+  manoSize: 3
+--- !u!4 &50866598
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 50866596}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.80617, y: -0, z: -15.65911}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &287290195
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,6 +751,14 @@ PrefabInstance:
       value: CombatController
       objectReference: {fileID: 0}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: EnemyMana
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: enemyDeck
+      value: 
+      objectReference: {fileID: 50866597}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: enemigoHealth
       value: 
       objectReference: {fileID: 1388119688620549908, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
@@ -883,3 +938,4 @@ SceneRoots:
   - {fileID: 287290196}
   - {fileID: 303302607}
   - {fileID: 1818336650}
+  - {fileID: 50866598}

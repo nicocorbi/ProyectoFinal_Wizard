@@ -252,9 +252,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBattleStarter
   detectionDistance: 6
   engageDistance: 1.5
+  maxChaseDistance: 10
   battleSceneName: BattleScene
   patrolSpeed: 2
   chaseSpeed: 5
+  alertIconPrefab: {fileID: 0}
+  alertDuration: 0.6
 --- !u!222 &8420717705550081700
 CanvasRenderer:
   m_ObjectHideFlags: 0

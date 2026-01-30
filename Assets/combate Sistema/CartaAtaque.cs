@@ -4,9 +4,19 @@ public class CartaAtaque : CartasAbstractClass
 {
     [SerializeField] private int damage = 50;
 
-    public override void EjecutarCarta(CombatController combate)
+    public override void EjecutarCarta(CombatController combate, bool usadaPorJugador)
     {
-        combate.enemigoHealth.TakeDamage(damage);
-        Debug.Log($"{Name} hizo {damage} de daño");
+        if (usadaPorJugador)
+        {
+            combate.enemigoHealth.TakeDamage(damage);
+            Debug.Log($"{Name} hizo {damage} de daño al ENEMIGO");
+        }
+        else
+        {
+            combate.jugadorHealth.TakeDamage(damage);
+            Debug.Log($"{Name} hizo {damage} de daño al JUGADOR");
+        }
     }
 }
+
+

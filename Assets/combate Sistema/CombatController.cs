@@ -8,10 +8,14 @@ public class CombatController : MonoBehaviour
     public HealthComponent enemigoHealth;
     public int JugadorMana = 5;
 
-    [Header("Sistema de mazo")]
+    [Header("Mazo del jugador")]
     public DeckManager deck;
 
-    [Header("Visual")]
+    [Header("Mazo del enemigo")]
+    public EnemyDeckManager enemyDeck;
+    public int EnemyMana = 5;
+
+    [Header("Visual jugador")]
     public Transform cartasSpawnPoint;
     public float escalaBaseCarta = 0.1f;
     public float separacion = 2f;
@@ -21,12 +25,31 @@ public class CombatController : MonoBehaviour
     private int currentIndex = 0;
     private bool esperandoSeleccion = false;
 
+    // ---------------------------------------------------------
+    // AWAKE: asegura que siempre usamos el jugador correcto
+    // ---------------------------------------------------------
+    private void Awake()
+    {
+
+        var playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            jugadorHealth = playerObj.GetComponent<HealthComponent>();
+        }
+        else
+        {
+            Debug.LogError("No se encontró un objeto con tag Player en la escena de combate.");
+        }
+    }
+
     private void Start()
     {
+        Debug.Log("JugadorHealth encontrado: " + jugadorHealth.name);
+        Debug.Log("Vida inicial del jugador: " + jugadorHealth.currentHealth);
+
         MostrarMano();
         esperandoSeleccion = true;
 
-        // Eventos de muerte
         enemigoHealth.OnDeath += EnemigoMuerto;
         jugadorHealth.OnDeath += JugadorMuerto;
     }
@@ -53,12 +76,10 @@ public class CombatController : MonoBehaviour
             SeleccionarCarta(currentIndex);
         }
     }
+
     public void IniciarCombate(GameObject enemigo)
     {
         enemigoHealth = enemigo.GetComponent<HealthComponent>();
-
-        // Aquí puedes desactivar movimiento del jugador si quieres
-        // playerMovement.enabled = false;
 
         Debug.Log("Combate iniciado contra " + enemigo.name);
 
@@ -66,7 +87,9 @@ public class CombatController : MonoBehaviour
         esperandoSeleccion = true;
     }
 
-
+    // ---------------------------------------------------------
+    // MANO DEL JUGADOR (VISUAL)
+    // ---------------------------------------------------------
     private void MostrarMano()
     {
         foreach (var c in cartasInstanciadas)
@@ -120,7 +143,14 @@ public class CombatController : MonoBehaviour
     {
         if (!esperandoSeleccion) return;
 
-        var carta = deck.ObtenerMano()[index];
+        var manoJugador = deck.ObtenerMano();
+        if (manoJugador.Count == 0 || index < 0 || index >= manoJugador.Count)
+        {
+            Debug.LogWarning("No hay carta válida seleccionada");
+            return;
+        }
+
+        var carta = manoJugador[index];
 
         if (JugadorMana < carta.Cost)
         {
@@ -130,19 +160,19 @@ public class CombatController : MonoBehaviour
 
         JugadorMana -= carta.Cost;
 
-        // Ejecuta la carta (daño, curación, etc.)
-        carta.EjecutarCarta(this);
+        carta.EjecutarCarta(this, true); // jugador usa carta
 
-        // Descarta y roba una nueva
         deck.UsarCarta(index);
 
-        // Actualiza la mano visual
         MostrarMano();
 
         esperandoSeleccion = false;
         ComprobarEstado();
     }
 
+    // ---------------------------------------------------------
+    // CAMBIO DE TURNOS
+    // ---------------------------------------------------------
     private void ComprobarEstado()
     {
         if (enemigoHealth.currentHealth <= 0)
@@ -151,35 +181,85 @@ public class CombatController : MonoBehaviour
             return;
         }
 
+        if (jugadorHealth.currentHealth <= 0)
+        {
+            Debug.Log("Has muerto");
+            return;
+        }
+
         TurnoEnemigo();
     }
 
+    // ---------------------------------------------------------
+    // TURNO DEL ENEMIGO (IA)
+    // ---------------------------------------------------------
     private void TurnoEnemigo()
     {
-        //enemigoHealth.TakeDamage(0); // por si quieres activar eventos
+        Debug.Log("Turno del enemigo");
 
-        // Daño al jugador
-        //jugadorHealth.TakeDamage(10);
+        var manoEnemigo = enemyDeck.ObtenerMano();
+
+        if (manoEnemigo == null || manoEnemigo.Count == 0)
+        {
+            Debug.Log("El enemigo no tiene cartas");
+            TurnoJugador();
+            return;
+        }
+
+        int index = Random.Range(0, manoEnemigo.Count);
+        var carta = manoEnemigo[index];
+
+        if (EnemyMana < carta.Cost)
+        {
+            Debug.Log("El enemigo no tiene mana suficiente, pasa turno");
+            TurnoJugador();
+            return;
+        }
+
+        EnemyMana -= carta.Cost;
+
+        carta.EjecutarCarta(this, false); // enemigo usa carta
+
+        enemyDeck.UsarCarta(index);
+
+        Debug.Log("El enemigo usó la carta: " + carta.name);
+
+        if (jugadorHealth.currentHealth <= 0)
+        {
+            Debug.Log("Has muerto");
+            return;
+        }
 
         TurnoJugador();
     }
 
+    // ---------------------------------------------------------
+    // TURNO DEL JUGADOR
+    // ---------------------------------------------------------
     private void TurnoJugador()
     {
         esperandoSeleccion = true;
         MostrarCartaActual();
     }
 
+    // ---------------------------------------------------------
+    // EVENTOS DE MUERTE
+    // ---------------------------------------------------------
     private void EnemigoMuerto()
     {
-        jugadorHealth.GetComponent<PlayerMovement>().enabled = true;
+        var pm = jugadorHealth.GetComponent<PlayerMovement>();
+        if (pm != null) pm.enabled = true;
+
         Debug.Log("El enemigo ha muerto");
     }
 
     private void JugadorMuerto()
     {
-        jugadorHealth.GetComponent<PlayerMovement>().enabled = true;
+        var pm = jugadorHealth.GetComponent<PlayerMovement>();
+        if (pm != null) pm.enabled = true;
+
         Debug.Log("Has muerto");
     }
 }
+
 

@@ -10,6 +10,8 @@ public abstract class CartasAbstractClass : MonoBehaviour
     public int Cost => ManaCost;
     public Sprite Image => CartaImage;
 
-    public abstract void EjecutarCarta(CombatController combate);
+    // IMPORTANTE: ahora sabe si la usa el jugador o el enemigo
+    public abstract void EjecutarCarta(CombatController combate, bool usadaPorJugador);
 }
+
 
