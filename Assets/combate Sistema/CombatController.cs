@@ -7,6 +7,7 @@ public class CombatController : MonoBehaviour
     [Header("Stats")]
     public HealthComponent jugadorHealth;
     public HealthComponent enemigoHealth;
+    public Enemy enemigo;   // ← REFERENCIA AL ENEMIGO REAL
     public int JugadorMana = 5;
     public int EnemyMana = 5;
 
@@ -75,9 +76,13 @@ public class CombatController : MonoBehaviour
         }
     }
 
-    public void IniciarCombate(GameObject enemigo)
+    public void IniciarCombate(GameObject enemigoGO)
     {
-        enemigoHealth = enemigo.GetComponent<HealthComponent>();
+        // Guardamos referencia al ENEMIGO real
+        enemigo = enemigoGO.GetComponent<Enemy>();
+
+        // Y a su componente de vida
+        enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
         enemigoHealth.OnDeath += EnemigoMuerto;
 
         MostrarMano();
@@ -224,6 +229,7 @@ public class CombatController : MonoBehaviour
         Debug.Log("Has muerto");
     }
 }
+
 
 
 

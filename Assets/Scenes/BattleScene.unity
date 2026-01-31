@@ -779,6 +779,10 @@ PrefabInstance:
       value: CombatController
       objectReference: {fileID: 0}
     - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
+      propertyPath: enemigo
+      value: 
+      objectReference: {fileID: 8024572400006750075, guid: 4ce01d858d2521a43822f504048cf15b, type: 3}
+    - target: {fileID: 5048804609410261981, guid: 47a108f025993fc418b080206ed9dd4a, type: 3}
       propertyPath: EnemyMana
       value: 50
       objectReference: {fileID: 0}

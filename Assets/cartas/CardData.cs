@@ -21,10 +21,14 @@ public class CardData : ScriptableObject
     public int healAmount;
 
     [Header("Defensa")]
-    public float defensePercent = 0.4f; // 40% menos daño
+    public float defensePercent = 0.4f;
 
     [Header("Tipo de carta")]
     public CardType type;
+
+    [Header("Tipo elemental")]
+    public ElementType tipo;
 }
+
 
 

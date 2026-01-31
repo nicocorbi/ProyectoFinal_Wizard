@@ -26,18 +26,23 @@ public class CartaAtaque : MonoBehaviour
     {
         if (esJugador)
         {
-            combate.enemigoHealth.TakeDamage(data.damage);
-            Debug.Log($"{data.cardName} hizo {data.damage} de daño al ENEMIGO");
+            // Multiplicador elemental según carta vs enemigo
+            float mult = TypeChart.GetMultiplier(data.tipo, combate.enemigo.tipoEnemigo);
+            int dañoFinal = Mathf.RoundToInt(data.damage * mult);
+
+            combate.enemigoHealth.TakeDamage(dañoFinal);
+
+            Debug.Log($"{data.cardName} ({data.tipo}) hizo {dañoFinal} de daño al ENEMIGO (x{mult})");
         }
         else
         {
             int dmg = data.damage;
 
-            // Si el jugador tiene defensa activa
+            // Defensa del jugador
             if (combate.defensaActiva)
             {
                 dmg = Mathf.RoundToInt(dmg * (1f - combate.defensaPorcentaje));
-                combate.defensaActiva = false; // Se consume
+                combate.defensaActiva = false;
             }
 
             combate.jugadorHealth.TakeDamage(dmg);
@@ -59,6 +64,9 @@ public class CartaAtaque : MonoBehaviour
         Debug.Log($"{data.cardName} curó {data.healAmount} de vida al jugador");
     }
 }
+
+
+
 
 
 

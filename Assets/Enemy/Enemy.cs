@@ -4,8 +4,11 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     [Header("Datos del enemigo (ScriptableObject)")]
-    public EnemyStats stats;          // ← NUEVO
-    public HealthComponent health;    // ← NUEVO
+    public EnemyStats stats;
+    public HealthComponent health;
+
+    [Header("Tipo elemental del enemigo")]
+    public ElementType tipoEnemigo;
 
     [Header("IA")]
     public float wanderRadius = 8f;
@@ -32,7 +35,6 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
-        // 🔥 Inicializar vida desde EnemyStats
         if (stats != null && health != null)
         {
             health.maxHealth = (int)stats.maxHealth;
@@ -56,21 +58,18 @@ public class Enemy : MonoBehaviour
         if (inBattle)
             return;
 
-        // --- IA DE MOVIMIENTO ---
         wanderTimer += Time.deltaTime;
 
         if (wanderTimer >= wanderInterval)
         {
             Vector3 newPos = RandomNavSphere(originPos, wanderRadius, NavMesh.AllAreas);
 
-            // ✔ Evita el error de SetDestination
             if (agent != null && agent.enabled && agent.isOnNavMesh)
                 agent.SetDestination(newPos);
 
             wanderTimer = 0f;
         }
 
-        // --- ANIMACIÓN ---
         Vector3 vel = agent != null ? agent.velocity : Vector3.zero;
 
         if (vel.magnitude < 0.1f)
@@ -116,7 +115,6 @@ public class Enemy : MonoBehaviour
                 break;
         }
     }
-
 
     public void LookAtPlayer(Transform player)
     {
@@ -172,5 +170,7 @@ public class Enemy : MonoBehaviour
         return navHit.position;
     }
 }
+
+
 
 
