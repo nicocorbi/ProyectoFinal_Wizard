@@ -118,5 +118,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5d45d0b3c5949d45b4f2f1a9d206bb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CartaVisual
+  spriteRenderer: {fileID: 6077269207329245767}
   cartaLogic: {fileID: 4641613062115750706}
-  artworkImage: {fileID: 0}

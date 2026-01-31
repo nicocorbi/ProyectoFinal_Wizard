@@ -10,6 +10,10 @@ public class CombatController : MonoBehaviour
     public int JugadorMana = 5;
     public int EnemyMana = 5;
 
+    [Header("Defensa")]
+    public bool defensaActiva = false;
+    public float defensaPorcentaje = 0f;
+
     [Header("Mazo del jugador")]
     public DeckManager deck;
 
@@ -19,7 +23,6 @@ public class CombatController : MonoBehaviour
     [Header("Visual jugador")]
     public Transform cartasSpawnPoint;
     public GameObject cartaVisualPrefab;
-    public float escalaBaseCarta = 0.1f;
     public float separacion = 2f;
     public float levantamientoY = 0.5f;
 
@@ -36,7 +39,6 @@ public class CombatController : MonoBehaviour
     {
         GameObject playerObj = null;
 
-        // Espera hasta que el CLON del Player exista en la escena
         while (playerObj == null)
         {
             playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -44,8 +46,6 @@ public class CombatController : MonoBehaviour
         }
 
         jugadorHealth = playerObj.GetComponent<HealthComponent>();
-
-        // Ahora sí podemos conectar eventos
         jugadorHealth.OnDeath += JugadorMuerto;
 
         MostrarMano();
@@ -84,9 +84,6 @@ public class CombatController : MonoBehaviour
         esperandoSeleccion = true;
     }
 
-    // ---------------------------------------------------------
-    // MANO DEL JUGADOR (VISUAL)
-    // ---------------------------------------------------------
     private void MostrarMano()
     {
         foreach (var c in cartasInstanciadas)
@@ -102,7 +99,6 @@ public class CombatController : MonoBehaviour
 
             GameObject cartaGO = Instantiate(cartaVisualPrefab, cartasSpawnPoint);
             cartaGO.transform.localPosition = new Vector3(i * separacion, 0, 0);
-            cartaGO.transform.localScale = Vector3.one * escalaBaseCarta;
 
             CartaVisual visual = cartaGO.GetComponent<CartaVisual>();
             visual.Configurar(data);
@@ -123,17 +119,11 @@ public class CombatController : MonoBehaviour
             {
                 cartaGO.transform.localPosition =
                     new Vector3(i * separacion, levantamientoY, 0);
-
-                cartaGO.transform.localScale =
-                    Vector3.one * escalaBaseCarta * 1.2f;
             }
             else
             {
                 cartaGO.transform.localPosition =
                     new Vector3(i * separacion, 0, 0);
-
-                cartaGO.transform.localScale =
-                    Vector3.one * escalaBaseCarta;
             }
         }
     }
@@ -234,6 +224,7 @@ public class CombatController : MonoBehaviour
         Debug.Log("Has muerto");
     }
 }
+
 
 
 
