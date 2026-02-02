@@ -17,7 +17,7 @@ public class CombatController : MonoBehaviour
     [Header("Defensa")]
     public bool defensaActiva = false;
     public float defensaPorcentaje = 0f;
-    public int defensaTurnosRestantes = 0; // ← NUEVO
+    public int defensaTurnosRestantes = 0;
 
     [Header("Mazo del jugador")]
     public DeckManager deck;
@@ -35,9 +35,16 @@ public class CombatController : MonoBehaviour
     private int currentIndex = 0;
     private bool esperandoSeleccion = false;
 
+    [Header("UI")]
+    public ManaOrbUI manaOrbUI;
+
     private void Start()
     {
         StartCoroutine(EsperarPlayer());
+
+        // Inicializar el orbe con el mana REAL del jugador
+        if (manaOrbUI != null)
+            manaOrbUI.Initialize(JugadorMana);
     }
 
     private IEnumerator EsperarPlayer()
@@ -88,6 +95,10 @@ public class CombatController : MonoBehaviour
 
         MostrarMano();
         esperandoSeleccion = true;
+
+        // Inicializar el orbe al entrar en combate
+        if (manaOrbUI != null)
+            manaOrbUI.Initialize(JugadorMana);
     }
 
     private void MostrarMano()
@@ -150,12 +161,16 @@ public class CombatController : MonoBehaviour
             return;
         }
 
+        // Gastar maná
         JugadorMana -= carta.manaCost;
+
+        // Actualizar orbe
+        if (manaOrbUI != null)
+            manaOrbUI.SetMana(JugadorMana);
 
         CartaVisual visual = cartasInstanciadas[index].GetComponent<CartaVisual>();
         visual.cartaLogic.EjecutarCarta(this, true);
 
-        // 🔥 El jugador adopta el tipo de la carta usada
         tipoJugador = carta.tipo;
         Debug.Log("El jugador ahora es tipo: " + tipoJugador);
 
@@ -234,10 +249,5 @@ public class CombatController : MonoBehaviour
         Debug.Log("Has muerto");
     }
 }
-
-
-
-
-
 
 

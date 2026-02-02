@@ -172,7 +172,7 @@ MonoBehaviour:
   iconFuego: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
   iconHielo: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
   iconRayo: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
-  iconAgua: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
+  iconAgua: {fileID: 21300000, guid: 9d18f9e098a8dfb41ad4de985714231d, type: 3}
   iconVida: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
   iconMuerte: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
   wanderRadius: 8

@@ -19,3 +19,4 @@ MonoBehaviour:
   healAmount: 0
   defensePercent: 0.4
   type: 1
+  tipo: 5
