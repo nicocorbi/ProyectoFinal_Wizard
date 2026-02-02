@@ -74,6 +74,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -95,9 +97,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!136 &1924545100204903496
 CapsuleCollider:
@@ -129,10 +133,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1800938087721747053}
-  serializedVersion: 4
+  serializedVersion: 5
   m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -164,6 +168,13 @@ MonoBehaviour:
   stats: {fileID: 11400000, guid: 1f418b5c7c0d5f143b469f8368d400e2, type: 2}
   health: {fileID: 1388119688620549908}
   tipoEnemigo: 0
+  uiPrefab: {fileID: 1201236481744936708, guid: c5da190f57a37924c97af5df05bd5860, type: 3}
+  iconFuego: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
+  iconHielo: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
+  iconRayo: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
+  iconAgua: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
+  iconVida: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
+  iconMuerte: {fileID: 21300000, guid: 6b585083112c5c245a2cd435f1e13d29, type: 3}
   wanderRadius: 8
   wanderInterval: 3
   spriteRenderer: {fileID: 791138698302823490}
@@ -300,6 +311,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &791138698302823490
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -318,6 +330,8 @@ SpriteRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -339,9 +353,11 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 5084661014962647745, guid: 2f90eb840bd0cf4438d49759bc08d718, type: 3}
   m_Color: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 1}
   m_FlipX: 0
@@ -351,7 +367,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!114 &6606372275184836313
 MonoBehaviour:

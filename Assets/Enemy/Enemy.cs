@@ -8,7 +8,21 @@ public class Enemy : MonoBehaviour
     public HealthComponent health;
 
     [Header("Tipo elemental del enemigo")]
-    public ElementType tipoEnemigo;   // ← SE RELLENA AUTOMÁTICAMENTE DESDE stats
+    public ElementType tipoEnemigo;   // Se rellena desde stats
+
+    [Header("UI del enemigo")]
+    public GameObject uiPrefab;                 // Prefab del Canvas World Space
+    private GameObject uiInstance;
+    private UnityEngine.UI.Image tipoIcono;
+    private TMPro.TextMeshProUGUI nombreTexto;
+
+    [Header("Iconos por tipo")]
+    public Sprite iconFuego;
+    public Sprite iconHielo;
+    public Sprite iconRayo;
+    public Sprite iconAgua;
+    public Sprite iconVida;
+    public Sprite iconMuerte;
 
     [Header("IA")]
     public float wanderRadius = 8f;
@@ -41,7 +55,7 @@ public class Enemy : MonoBehaviour
             health.maxHealth = stats.maxHealth;
             health.currentHealth = stats.maxHealth;
 
-            // 🔥 Tipo elemental cargado desde el ScriptableObject
+            // Tipo elemental desde ScriptableObject
             tipoEnemigo = stats.tipoEnemigo;
         }
         else
@@ -55,6 +69,47 @@ public class Enemy : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         originPos = transform.position;
         wanderTimer = wanderInterval;
+
+        // Instanciar UI encima del enemigo
+        if (uiPrefab != null)
+        {
+            uiInstance = Instantiate(uiPrefab, transform);
+            uiInstance.transform.localPosition = new Vector3(0, 2f, 0);
+
+            tipoIcono = uiInstance.transform.Find("Icon").GetComponent<UnityEngine.UI.Image>();
+            nombreTexto = uiInstance.transform.Find("NameText").GetComponent<TMPro.TextMeshProUGUI>();
+
+            // Nombre del enemigo
+            nombreTexto.text = stats.enemyName;
+
+            // Icono del tipo
+            switch (tipoEnemigo)
+            {
+                case ElementType.Fuego:
+                    tipoIcono.sprite = iconFuego;
+                    break;
+
+                case ElementType.Hielo:
+                    tipoIcono.sprite = iconHielo;
+                    break;
+
+                case ElementType.Rayo:
+                    tipoIcono.sprite = iconRayo;
+                    break;
+
+                case ElementType.Agua:
+                    tipoIcono.sprite = iconAgua;
+                    break;
+
+                case ElementType.Vida:
+                    tipoIcono.sprite = iconVida;
+                    break;
+
+                case ElementType.Muerte:
+                    tipoIcono.sprite = iconMuerte;
+                    break;
+            }
+        }
     }
 
     void Update()
@@ -174,3 +229,5 @@ public class Enemy : MonoBehaviour
         return navHit.position;
     }
 }
+
+
