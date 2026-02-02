@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class CartaAtaque : MonoBehaviour
 {
@@ -9,7 +9,7 @@ public class CartaAtaque : MonoBehaviour
         switch (data.type)
         {
             case CardType.Damage:
-                EjecutarDaño(combate, esJugador);
+                EjecutarDaÃ±o(combate, esJugador);
                 break;
 
             case CardType.Defense:
@@ -22,31 +22,37 @@ public class CartaAtaque : MonoBehaviour
         }
     }
 
-    void EjecutarDaño(CombatController combate, bool esJugador)
+    void EjecutarDaÃ±o(CombatController combate, bool esJugador)
     {
         if (esJugador)
         {
-            // Multiplicador elemental según carta vs enemigo
             float mult = TypeChart.GetMultiplier(data.tipo, combate.enemigo.tipoEnemigo);
-            int dañoFinal = Mathf.RoundToInt(data.damage * mult);
+            int daÃ±oFinal = Mathf.RoundToInt(data.damage * mult);
 
-            combate.enemigoHealth.TakeDamage(dañoFinal);
+            combate.enemigoHealth.TakeDamage(daÃ±oFinal);
 
-            Debug.Log($"{data.cardName} ({data.tipo}) hizo {dañoFinal} de daño al ENEMIGO (x{mult})");
+            Debug.Log($"{data.cardName} ({data.tipo}) hizo {daÃ±oFinal} de daÃ±o al ENEMIGO (x{mult})");
         }
         else
         {
-            int dmg = data.damage;
+            // Multiplicador elemental enemigo â†’ jugador
+            float mult = TypeChart.GetMultiplier(data.tipo, combate.tipoJugador);
+            int dmg = Mathf.RoundToInt(data.damage * mult);
 
-            // Defensa del jugador
-            if (combate.defensaActiva)
+            // ğŸ”¥ Defensa de 3 turnos
+            if (combate.defensaActiva && combate.defensaTurnosRestantes > 0)
             {
                 dmg = Mathf.RoundToInt(dmg * (1f - combate.defensaPorcentaje));
-                combate.defensaActiva = false;
+                combate.defensaTurnosRestantes--;
+
+                Debug.Log($"DEFENSA: quedan {combate.defensaTurnosRestantes} turnos de reducciÃ³n");
+
+                if (combate.defensaTurnosRestantes <= 0)
+                    combate.defensaActiva = false;
             }
 
             combate.jugadorHealth.TakeDamage(dmg);
-            Debug.Log($"{data.cardName} hizo {dmg} de daño al JUGADOR");
+            Debug.Log($"{data.cardName} ({data.tipo}) hizo {dmg} de daÃ±o al JUGADOR (x{mult})");
         }
     }
 
@@ -54,16 +60,18 @@ public class CartaAtaque : MonoBehaviour
     {
         combate.defensaActiva = true;
         combate.defensaPorcentaje = data.defensePercent;
+        combate.defensaTurnosRestantes = 3; // â† Dura 3 turnos enemigos
 
-        Debug.Log($"DEFENSA ACTIVADA: el próximo ataque enemigo hará un {data.defensePercent * 100}% menos de daño");
+        Debug.Log($"DEFENSA ACTIVADA: durante 3 turnos el enemigo harÃ¡ un {data.defensePercent * 100}% menos de daÃ±o");
     }
 
     void EjecutarCuracion(CombatController combate)
     {
         combate.jugadorHealth.Heal(data.healAmount);
-        Debug.Log($"{data.cardName} curó {data.healAmount} de vida al jugador");
+        Debug.Log($"{data.cardName} curÃ³ {data.healAmount} de vida al jugador");
     }
 }
+
 
 
 

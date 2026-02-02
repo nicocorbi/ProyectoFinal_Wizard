@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour
     public HealthComponent health;
 
     [Header("Tipo elemental del enemigo")]
-    public ElementType tipoEnemigo;
+    public ElementType tipoEnemigo;   // ← SE RELLENA AUTOMÁTICAMENTE DESDE stats
 
     [Header("IA")]
     public float wanderRadius = 8f;
@@ -37,8 +37,12 @@ public class Enemy : MonoBehaviour
     {
         if (stats != null && health != null)
         {
-            health.maxHealth = (int)stats.maxHealth;
-            health.currentHealth = (int)stats.maxHealth;
+            // Vida
+            health.maxHealth = stats.maxHealth;
+            health.currentHealth = stats.maxHealth;
+
+            // 🔥 Tipo elemental cargado desde el ScriptableObject
+            tipoEnemigo = stats.tipoEnemigo;
         }
         else
         {
@@ -170,7 +174,3 @@ public class Enemy : MonoBehaviour
         return navHit.position;
     }
 }
-
-
-
-

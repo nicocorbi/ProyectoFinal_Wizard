@@ -7,13 +7,17 @@ public class CombatController : MonoBehaviour
     [Header("Stats")]
     public HealthComponent jugadorHealth;
     public HealthComponent enemigoHealth;
-    public Enemy enemigo;   // ← REFERENCIA AL ENEMIGO REAL
+    public Enemy enemigo;
     public int JugadorMana = 5;
     public int EnemyMana = 5;
+
+    [Header("Tipo elemental del jugador")]
+    public ElementType tipoJugador = ElementType.Fuego;
 
     [Header("Defensa")]
     public bool defensaActiva = false;
     public float defensaPorcentaje = 0f;
+    public int defensaTurnosRestantes = 0; // ← NUEVO
 
     [Header("Mazo del jugador")]
     public DeckManager deck;
@@ -78,10 +82,7 @@ public class CombatController : MonoBehaviour
 
     public void IniciarCombate(GameObject enemigoGO)
     {
-        // Guardamos referencia al ENEMIGO real
         enemigo = enemigoGO.GetComponent<Enemy>();
-
-        // Y a su componente de vida
         enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
         enemigoHealth.OnDeath += EnemigoMuerto;
 
@@ -153,6 +154,10 @@ public class CombatController : MonoBehaviour
 
         CartaVisual visual = cartasInstanciadas[index].GetComponent<CartaVisual>();
         visual.cartaLogic.EjecutarCarta(this, true);
+
+        // 🔥 El jugador adopta el tipo de la carta usada
+        tipoJugador = carta.tipo;
+        Debug.Log("El jugador ahora es tipo: " + tipoJugador);
 
         deck.UsarCarta(index);
 
@@ -229,6 +234,8 @@ public class CombatController : MonoBehaviour
         Debug.Log("Has muerto");
     }
 }
+
+
 
 
 
