@@ -2,8 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// pasar referencias directas a comunicación por eventos
+// feedback visual pa to
+
 public class CombatController : MonoBehaviour
 {
+    // 🔥 EVENTOS
+    public static event System.Action<int, int> OnManaChanged;        
+    public static event System.Action<bool> OnTurnChanged;            
+    public static event System.Action<HealthComponent> OnLifeChanged; 
+
     [Header("Stats")]
     public HealthComponent jugadorHealth;
     public HealthComponent enemigoHealth;
@@ -35,16 +43,15 @@ public class CombatController : MonoBehaviour
     private int currentIndex = 0;
     private bool esperandoSeleccion = false;
 
-    [Header("UI")]
-    public ManaOrbUI manaOrbUI;
-
     private void Start()
     {
         StartCoroutine(EsperarPlayer());
 
-        // Inicializar el orbe con el mana REAL del jugador
-        if (manaOrbUI != null)
-            manaOrbUI.Initialize(JugadorMana);
+        // Notificar mana inicial
+        OnManaChanged?.Invoke(JugadorMana, JugadorMana);
+
+        // Notificar turno inicial (jugador)
+        OnTurnChanged?.Invoke(true);
     }
 
     private IEnumerator EsperarPlayer()
@@ -59,6 +66,15 @@ public class CombatController : MonoBehaviour
 
         jugadorHealth = playerObj.GetComponent<HealthComponent>();
         jugadorHealth.OnDeath += JugadorMuerto;
+
+        // Escuchar cambios de vida del jugador
+        jugadorHealth.OnHealthChanged += (vidaActual, vidaMax) =>
+        {
+            OnLifeChanged?.Invoke(jugadorHealth);
+        };
+
+        // Notificar vida inicial
+        OnLifeChanged?.Invoke(jugadorHealth);
 
         MostrarMano();
         esperandoSeleccion = true;
@@ -93,12 +109,23 @@ public class CombatController : MonoBehaviour
         enemigoHealth = enemigoGO.GetComponent<HealthComponent>();
         enemigoHealth.OnDeath += EnemigoMuerto;
 
+        // Escuchar cambios de vida del enemigo
+        enemigoHealth.OnHealthChanged += (vidaActual, vidaMax) =>
+        {
+            OnLifeChanged?.Invoke(enemigoHealth);
+        };
+
+        // Notificar vida inicial del enemigo
+        OnLifeChanged?.Invoke(enemigoHealth);
+
         MostrarMano();
         esperandoSeleccion = true;
 
-        // Inicializar el orbe al entrar en combate
-        if (manaOrbUI != null)
-            manaOrbUI.Initialize(JugadorMana);
+        // Notificar mana inicial
+        OnManaChanged?.Invoke(JugadorMana, JugadorMana);
+
+        // Notificar turno jugador
+        OnTurnChanged?.Invoke(true);
     }
 
     private void MostrarMano()
@@ -164,15 +191,13 @@ public class CombatController : MonoBehaviour
         // Gastar maná
         JugadorMana -= carta.manaCost;
 
-        // Actualizar orbe
-        if (manaOrbUI != null)
-            manaOrbUI.SetMana(JugadorMana);
+        // Notificar cambio de maná
+        OnManaChanged?.Invoke(JugadorMana, JugadorMana);
 
         CartaVisual visual = cartasInstanciadas[index].GetComponent<CartaVisual>();
         visual.cartaLogic.EjecutarCarta(this, true);
 
         tipoJugador = carta.tipo;
-        Debug.Log("El jugador ahora es tipo: " + tipoJugador);
 
         deck.UsarCarta(index);
 
@@ -201,6 +226,9 @@ public class CombatController : MonoBehaviour
 
     private void TurnoEnemigo()
     {
+        // Notificar turno enemigo
+        OnTurnChanged?.Invoke(false);
+
         var manoEnemigo = enemyDeck.ObtenerMano();
 
         if (manoEnemigo == null || manoEnemigo.Count == 0)
@@ -235,6 +263,9 @@ public class CombatController : MonoBehaviour
 
     private void TurnoJugador()
     {
+        // Notificar turno jugador
+        OnTurnChanged?.Invoke(true);
+
         esperandoSeleccion = true;
         MostrarCartaActual();
     }
@@ -249,5 +280,3 @@ public class CombatController : MonoBehaviour
         Debug.Log("Has muerto");
     }
 }
-
-

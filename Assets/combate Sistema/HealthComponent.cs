@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
@@ -8,17 +8,26 @@ public class HealthComponent : MonoBehaviour
 
     public System.Action OnDeath;
     public System.Action<int> OnDamage;
+    public System.Action<int, int> OnHealthChanged;
+  
 
     private void Awake()
     {
         currentHealth = maxHealth;
+
+        // Notificar vida inicial
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     public void TakeDamage(int amount)
     {
         currentHealth -= amount;
 
+        // Notificar daño
         OnDamage?.Invoke(currentHealth);
+
+        // Notificar cambio de vida
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
         if (currentHealth <= 0)
         {
@@ -30,6 +39,9 @@ public class HealthComponent : MonoBehaviour
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+
+        // Notificar cambio de vida
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
     private void Die()
@@ -37,4 +49,3 @@ public class HealthComponent : MonoBehaviour
         OnDeath?.Invoke();
     }
 }
-

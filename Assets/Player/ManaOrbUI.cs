@@ -6,17 +6,17 @@ public class ManaOrbUI : MonoBehaviour
     [Header("Referencia al relleno del orbe")]
     public Image fillImage;
 
-    private int maxMana;
-
-    // Llamado desde CombatController al iniciar el combate
-    public void Initialize(int maxManaValue)
+    private void OnEnable()
     {
-        maxMana = maxManaValue;
-        SetMana(maxManaValue);
+        CombatController.OnManaChanged += UpdateMana;
     }
 
-    // Actualiza el fill del orbe
-    public void SetMana(int currentMana)
+    private void OnDisable()
+    {
+        CombatController.OnManaChanged -= UpdateMana;
+    }
+
+    private void UpdateMana(int manaActual, int manaMax)
     {
         if (fillImage == null)
         {
@@ -24,13 +24,7 @@ public class ManaOrbUI : MonoBehaviour
             return;
         }
 
-        if (maxMana <= 0)
-        {
-            Debug.LogError("ManaOrbUI: maxMana no está inicializado.");
-            return;
-        }
-
-        float amount = Mathf.Clamp01((float)currentMana / maxMana);
+        float amount = Mathf.Clamp01((float)manaActual / manaMax);
         fillImage.fillAmount = amount;
     }
 }
